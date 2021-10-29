@@ -28,13 +28,9 @@
   apt_key:
     url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
     state: present
-
-- name: updating repository cache
-  apt:
-    update_cache: yes
   
 - name: installing openjdk-11-jdk
-  apt:
+  package:
     name: openjdk-11-jdk
     state: present
 
@@ -42,6 +38,12 @@
   apt:
     name: jenkins
     state: present
+
+- name: changing jenkins port 8080-->8081
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: "^HTTP_PORT=8080"
+    line: HTTP_PORT=8081
 
 - name: daemon-reload
   systemd:
@@ -51,9 +53,4 @@
   systemd:
     name: jenkins
     state: started
-
-- name: changing jenkins port 8080-->8081
-  lineinfile:
-    path: /etc/default/jenkins
-    regexp: "^HTTP_PORT=8080"
-    line: HTTP_PORT=8081
+    enabled: yes
