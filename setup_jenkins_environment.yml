@@ -7,6 +7,9 @@
       net.core.somaxconn: 65000
       vm.swappiness: 0
       vm.nr_hugepages: 0
+      vm.nr_hugepages_mempolicy: 0
+      vm.hugepages_treat_as_movable: 0
+      vm.nr_overcommit_hugepages: 0
   roles:
     - jenkins_setup
 
