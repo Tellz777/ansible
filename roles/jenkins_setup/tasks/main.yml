@@ -7,16 +7,16 @@
     ignoreerrors: yes
   with_dict: '{{ sysctl_config }}'
 
-- name: add Jenkins apt repository key
-  apt_key:
-    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
-    state: present
-
 - name: add jenkins apt repository
   apt_repository:
     repo: "deb http://pkg.jenkins.io/debian-stable binary/"
     state: present
     update_cache: true
+
+- name: add Jenkins apt repository key
+  apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    state: present
 
 - name: updating repository cache
   apt:
@@ -32,10 +32,14 @@
     name: jenkins
     state: present
 
-- name: install nginx
-  apt:
-    name: nginx
-    state: absent
+- name: daemon-reload
+  systemd:
+    daemon_reload: yes
+
+- name: start jenkins
+  systemd:
+    name: jenkins
+    state: started
 
 - name: changing jenkins port 8080-->8081
   lineinfile:
