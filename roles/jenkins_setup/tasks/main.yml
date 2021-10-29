@@ -7,6 +7,17 @@
     ignoreerrors: yes
   with_dict: '{{ sysctl_config }}'
 
+- name: delete jenkins
+  apt:
+    name: jenkins
+    state: absent
+    purge: yes
+    update_cache: yes
+
+- name: updating repository cache
+  apt:
+    update_cache: yes
+
 - name: add jenkins apt repository
   apt_repository:
     repo: "deb http://pkg.jenkins.io/debian-stable binary/"
