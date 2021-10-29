@@ -1,0 +1,12 @@
+- hosts: jenkins
+  become: true
+  vars:
+    sysctl_config:
+      vm.min_free_kbytes: 70000
+      fs.file-max: 2097152
+      net.core.somaxconn: 65000
+      vm.swappiness: 0
+      vm.nr_hugepages: 0
+  roles:
+    - jenkins_setup
+

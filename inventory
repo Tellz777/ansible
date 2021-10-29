@@ -1,0 +1,2 @@
+[jenkins]
+jenkins1 ansible_host=10.0.200.102 ansible_user=vagrant
