@@ -1,0 +1,20 @@
+- name: removing jenkins
+  apt:
+    name: jenkins
+    state: absent
+    autoremove: yes
+    purge: yes
+
+- name: removing java
+  apt:
+    name: openjdk-11-jdk
+    state: absent
+    autoremove: yes
+    purge: yes
+
+- name: remove apt key
+  apt_key:
+    id: 45F2C3D5
+    state: absent
+
+
