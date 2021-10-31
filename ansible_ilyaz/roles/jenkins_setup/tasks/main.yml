@@ -1,4 +1,4 @@
-- name: changing sysctl parameters
+- name: Changing sysctl parameters
   sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
@@ -7,45 +7,45 @@
     ignoreerrors: yes
   with_dict: "{{ sysctl_config }}"
 
-- name: add Jenkins apt repository key
+- name: Adding Jenkins apt repository key
   apt_key:
     url: "{{ jenkins_repo_key }}"
     state: present
 
-- name: add jenkins apt repository
+- name: Adding Jenkins apt repository
   apt_repository:
     repo: "{{ jenkins_repo }}"
     state: present
     update_cache: true
   
-- name: installing openjdk-11-jdk
+- name: Installing {{ openjdk_package }}
   apt:
     name: "{{ openjdk_package }}"
     state: present
 
-- name: installing jenkins
+- name: Installing Jenkins
   apt:
     name: jenkins
     state: present
  
-- name: installing nginx
+- name: Installing Nginx
   apt:
     name: nginx
     state: present
 
-- name: changing jenkins port 8080-->8081
+- name: Changing Jenkins port from 8080 --> {{ jenkins_port }}
   lineinfile:
     path: "{{ jenkins_config }}"
     regexp: "^HTTP_PORT=8080"
     line: "HTTP_PORT={{ jenkins_port }}"
 
-- name: disabling setup wizzard
+- name: Disabling Jenkins setup wizzard
   lineinfile:
     path: "{{ jenkins_config }}"
     regexp: '^#JAVA_ARGS="-Xmx256m"'
     line: "{{ java_args }}"
 
-- name: create jenkins init scripts directory
+- name: Creating Jenkins init scripts directory
   file:
     path: "{{ jenkins_init_path }}"
     state: directory
@@ -53,19 +53,11 @@
     group: "{{ jenkins_process_group }}"
     mode: 0775
 
-#- name: copy jenkins init file
-#  copy:
-#    src: 00-add-user.groovy
-#    dest: "{{ jenkins_init_path }}"
-#    owner: "{{ jenkins_process_user }}"
-#    group: "{{ jenkins_process_group }}"
-#    mode: 0777
-
-- name: Add init script to create a jenkins user
+- name: Copying init script to create a Jenkins user
   template: src=00-add-user.groovy.j2
             dest="{{ jenkins_init_path }}/00-add-user.groovy"
 
-- name: copy nginx config file
+- name: Copying Nginx reverse proxy config file
   copy:
     src: default
     dest: "/etc/nginx/sites-available/"
@@ -73,42 +65,19 @@
     group: "{{ jenkins_process_group }}"
     mode: 0775
 
-- name: restart jenkins
+- name: Restarting Jenkins
   service:
     name: jenkins
     state: restarted
     enabled: yes
 
-- name: restart nginx
+- name: Restarting Nginx
   service:
     name: nginx
     state: restarted
     enabled: yes
 
-- name: Create Jenkins updates directory.
-  file:
-    path: "{{ jenkins_home }}/updates"
-    state: directory
-    owner: jenkins
-    group: jenkins
-    mode: 0755
-
-- name: Download current plugin updates from Jenkins update site.
-  get_url:
-    url: "{{ jenkins_updates_url }}/update-center.json"
-    dest: "{{ jenkins_home }}/updates/default.json"
-    owner: jenkins
-    group: jenkins
-    mode: 0440
-    timeout: 5
-  changed_when: false
-
-- name: Remove first and last line from json file.
-  replace:  # noqa 208
-    path: "{{ jenkins_home }}/updates/default.json"
-    regexp: "1d;$d"
-
-- name: Install Jenkins plugins using password.
+- name: Installing Jenkins plugins using password
   jenkins_plugin:
     name: "{{ item.name | default(item) }}"
     version: "{{ item.version | default(omit) }}"
@@ -120,14 +89,13 @@
     updates_expiration: 86400
     updates_url: "{{ jenkins_updates_url }}"
     url: "http://{{ jenkins_ip }}:{{ jenkins_port }}"
-    with_dependencies: false
   with_items: "{{ jenkins_plugins }}"
   register: plugin_result
   until: plugin_result is success
-  retries: 3
+  retries: 5
   delay: 2
  
-- name: restart jenkins
+- name: Restarting Jenkins
   service:
     name: jenkins
     state: restarted

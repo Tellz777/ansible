@@ -3,4 +3,8 @@
 
 - name: Jenkins Setup
   import_playbook: jenkins-setup.yml
+  tags: setup
 
+- name: Jenkins Cleanup
+  import_playbook: jenkins-cleanup.yml
+  tags: cleanup 

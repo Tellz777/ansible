@@ -14,8 +14,10 @@ java_args: JAVA_ARGS="-Djenkins.install.runSetupWizard=false"
 jenkins_process_user: root
 jenkins_process_group: root
 jenkins_home: /var/lib/jenkins
-jenkins_admin_username: ilya
-jenkins_admin_password: 1234
+jenkins_admin_username: Jenkins-ilyazhdanko
+jenkins_admin_password: 228
+jenkins_user: jenkins
+jenkins_group: jenkins
 jenkins_init_path: /var/lib/jenkins/init.groovy.d
 jenkins_updates_url: https://updates.jenkins.io
 jenkins_plugin_timeout: 100

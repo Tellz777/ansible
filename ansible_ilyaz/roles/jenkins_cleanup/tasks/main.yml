@@ -1,23 +1,23 @@
-- name: removing jenkins
+- name: Removing Jenkins
   apt:
     name: jenkins
     state: absent
     autoremove: yes
     purge: yes
 
-- name: removing java
+- name: Removing Java
   apt:
     name: openjdk-11-jdk
     state: absent
     autoremove: yes
     purge: yes
 
-- name: remove apt key
+- name: Removing apt repo key
   apt_key:
     id: 45F2C3D5
     state: absent
 
-- name: remove nginx
+- name: Removing Nginx
   apt:
     name: nginx
     state: absent
