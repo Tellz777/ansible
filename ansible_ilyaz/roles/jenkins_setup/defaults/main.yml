@@ -4,6 +4,7 @@ sysctl_config:
   net.core.somaxconn: 65000
   vm.swappiness: 0
   vm.nr_hugepages: 0
+jenkins_ip: 165.22.70.154
 jenkins_repo_key: https://pkg.jenkins.io/debian-stable/jenkins.io.key
 jenkins_repo: deb http://pkg.jenkins.io/debian-stable binary/
 openjdk_package: openjdk-11-jdk
@@ -13,5 +14,12 @@ java_args: JAVA_ARGS="-Djenkins.install.runSetupWizard=false"
 jenkins_process_user: root
 jenkins_process_group: root
 jenkins_home: /var/lib/jenkins
-jenkins_admin_username: qwerty
-jenkins_admin_password: qwerty
+jenkins_admin_username: ilya
+jenkins_admin_password: 1234
+jenkins_init_path: /var/lib/jenkins/init.groovy.d
+jenkins_updates_url: https://updates.jenkins.io
+jenkins_plugin_timeout: 100
+jenkins_plugins:
+  - github
+  - role-strategy
+  - nodejs
