@@ -17,4 +17,10 @@
     id: 45F2C3D5
     state: absent
 
+- name: remove nginx
+  apt:
+    name: nginx
+    state: absent
+    autoremove: yes
+    purge: yes
 

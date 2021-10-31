@@ -10,3 +10,5 @@ sysctl_config:
 jenkins_process_user: root
 jenkins_process_group: root
 jenkins_home: /var/lib/jenkins
+jenkins.admin_username: qwerty
+jenkins.admin_password: qwerty

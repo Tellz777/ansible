@@ -27,7 +27,11 @@
   apt:
     name: jenkins
     state: present
-    update_cache: true
+ 
+- name: installing nginx
+  apt:
+    name: nginx
+    state: present
 
 - name: changing jenkins port 8080-->8081
   lineinfile:
@@ -35,11 +39,11 @@
     regexp: "^HTTP_PORT=8080"
     line: HTTP_PORT=8081
 
-- name: restart jenkins
-  service:
-    name: jenkins
-    state: restarted
-    enabled: yes
+- name: disabling setup wizzard
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: '^#JAVA_ARGS="-Xmx256m"'
+    line: JAVA_ARGS="-Djenkins.install.runSetupWizard=false"
 
 - name: create jenkins init scripts directory
   file:
@@ -49,10 +53,33 @@
     group: "{{ jenkins_process_group }}"
     mode: 0775
 
-- name: copy plugins file
+- name: copy nginx config file
   copy:
-    src: jenkins.yaml
-    dest: "{{ jenkins_home }}"
+    src: default
+    dest: "/etc/nginx/sites-available/"
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: 0775
+
+- name: restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+    enabled: yes
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes
+
+#- name: Create initialization scripts directory
+#  file: path="{{ jenkins_home }}/init.groovy.d"
+#        state=directory
+#        owner=root
+#        group=root
+#        mode=0775
+
+#- name: Add initialization script to setup basic security
+#  template: src=03.groovy.j2
+#            dest="{{ jenkins_home }}/init.groovy.d/03.groovy"
