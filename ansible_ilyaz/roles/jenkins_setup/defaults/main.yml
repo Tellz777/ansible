@@ -1,0 +1,17 @@
+sysctl_config:
+  vm.min_free_kbytes: 70000
+  fs.file-max: 2097152
+  net.core.somaxconn: 65000
+  vm.swappiness: 0
+  vm.nr_hugepages: 0
+jenkins_repo_key: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+jenkins_repo: deb http://pkg.jenkins.io/debian-stable binary/
+openjdk_package: openjdk-11-jdk
+jenkins_config: /etc/default/jenkins
+jenkins_port: 8081
+java_args: JAVA_ARGS="-Djenkins.install.runSetupWizard=false"
+jenkins_process_user: root
+jenkins_process_group: root
+jenkins_home: /var/lib/jenkins
+jenkins_admin_username: qwerty
+jenkins_admin_password: qwerty

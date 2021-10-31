@@ -9,18 +9,18 @@
 
 - name: add Jenkins apt repository key
   apt_key:
-    url: "https://pkg.jenkins.io/debian-stable/jenkins.io.key"
+    url: "{{ jenkins_repo_key }}"
     state: present
 
 - name: add jenkins apt repository
   apt_repository:
-    repo: "deb http://pkg.jenkins.io/debian-stable binary/"
+    repo: "{{ jenkins_repo }}"
     state: present
     update_cache: true
   
 - name: installing openjdk-11-jdk
   apt:
-    name: openjdk-11-jdk
+    name: "{{ openjdk_package }}"
     state: present
 
 - name: installing jenkins
@@ -35,15 +35,15 @@
 
 - name: changing jenkins port 8080-->8081
   lineinfile:
-    path: /etc/default/jenkins
+    path: "{{ jenkins_config }}"
     regexp: "^HTTP_PORT=8080"
-    line: HTTP_PORT=8081
+    line: 'HTTP_PORT="{{ jenkins_port }}"'
 
 - name: disabling setup wizzard
   lineinfile:
     path: /etc/default/jenkins
     regexp: '^#JAVA_ARGS="-Xmx256m"'
-    line: JAVA_ARGS="-Djenkins.install.runSetupWizard=false"
+    line: "{{ java_args }}"
 
 - name: create jenkins init scripts directory
   file:
@@ -52,6 +52,18 @@
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: 0775
+
+#- name: copy jenkins init file
+#  copy:
+#    src: 00-add-user.groovy
+#    dest: "{{ jenkins_home }}/init.groovy.d"
+#    owner: "{{ jenkins_process_user }}"
+#    group: "{{ jenkins_process_group }}"
+#    mode: 0777
+
+- name: Add init script to create a jenkins user
+  template: src=00-add-user.groovy.j2
+            dest=/var/lib/jenkins/init.groovy.d/00-add-user.groovy
 
 - name: copy nginx config file
   copy:
@@ -72,14 +84,3 @@
     name: nginx
     state: restarted
     enabled: yes
-
-#- name: Create initialization scripts directory
-#  file: path="{{ jenkins_home }}/init.groovy.d"
-#        state=directory
-#        owner=root
-#        group=root
-#        mode=0775
-
-#- name: Add initialization script to setup basic security
-#  template: src=03.groovy.j2
-#            dest="{{ jenkins_home }}/init.groovy.d/03.groovy"
